@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Restaurant Menu</title>
+    <!-- Load Bootstrap CSS -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Load markdown-it library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/markdown-it/13.0.1/markdown-it.min.js" integrity="sha512-SYfDUYPg5xspsG6OOpXU366G8SZsdHOhqk/icdrYJ2E/WKZxPxze7d2HD3AyXpT7U22PZ5y74xRpqZ6A2bJ+kQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+</head>
+
+<body>
+
+<div class="container mt-5">
+    <h1 class="text-center mb-4">Restaurant Menu</h1>
+    <div id="menuContent"></div>
+</div>
+
+<!-- Load Bootstrap JS and Popper.js -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<!-- Custom JS to load and process the menu -->
+<script>
+    // Initialize markdown-it
+    const md = window.markdownit();
+
+    fetch('menu.md')
+        .then(response => response.text())
+        .then(data => {
+            // Parse the Markdown content using markdown-it
+            const htmlContent = md.render(data);
+            document.getElementById('menuContent').innerHTML = htmlContent;
+
+            // Add Bootstrap classes for styling
+            styleMenu();
+        })
+        .catch(error => {
+            console.error('Error fetching the menu:', error);
+        });
+
+    function styleMenu() {
+        const headers = document.querySelectorAll('#menuContent h1, #menuContent h2, #menuContent h3');
+        headers.forEach(header => {
+            header.classList.add('display-4'); // Add Bootstrap class for headers
+        });
+
+        const listItems = document.querySelectorAll('#menuContent li');
+        listItems.forEach(item => {
+            item.classList.add('mb-2'); // Add margin for each list item
+        });
+    }
+</script>
+
+</body>
+</html>
