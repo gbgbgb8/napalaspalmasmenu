@@ -9,6 +9,22 @@
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <!-- Load markdown-it library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/markdown-it/13.0.1/markdown-it.min.js" integrity="sha512-SYfDUYPg5xspsG6OOpXU366G8SZsdHOhqk/icdrYJ2E/WKZxPxze7d2HD3AyXpT7U22PZ5y74xRpqZ6A2bJ+kQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <style>
+        .menu-section {
+            margin-bottom: 30px;
+        }
+        .menu-item:hover .menu-description-spanish {
+            display: block;
+        }
+        .menu-description-spanish {
+            display: none;
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            padding: 5px;
+            position: absolute;
+            z-index: 1;
+        }
+    </style>
 </head>
 
 <body>
@@ -45,12 +61,17 @@
     function styleMenu() {
         const headers = document.querySelectorAll('#menuContent h1, #menuContent h2, #menuContent h3');
         headers.forEach(header => {
-            header.classList.add('display-4'); // Add Bootstrap class for headers
+            header.classList.add('display-4', 'menu-section'); // Add Bootstrap class for headers
         });
 
         const listItems = document.querySelectorAll('#menuContent li');
         listItems.forEach(item => {
-            item.classList.add('mb-2'); // Add margin for each list item
+            item.classList.add('mb-2', 'menu-item'); // Add margin for each list item
+            // Splitting English and Spanish descriptions
+            const desc = item.lastElementChild.innerText.split('*');
+            if (desc.length > 1) {
+                item.lastElementChild.innerHTML = `<span>${desc[0]}</span> <span class="menu-description-spanish">${desc[1]}</span>`;
+            }
         });
     }
 </script>
