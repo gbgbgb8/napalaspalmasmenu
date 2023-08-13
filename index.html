@@ -13,16 +13,9 @@
         .menu-section {
             margin-bottom: 30px;
         }
-        .menu-item:hover .menu-description-spanish {
-            display: block;
-        }
         .menu-description-spanish {
-            display: none;
-            background-color: #f8f9fa;
-            border: 1px solid #dee2e6;
-            padding: 5px;
-            position: absolute;
-            z-index: 1;
+            font-size: 0.9em;
+            color: gray;
         }
     </style>
 </head>
@@ -70,7 +63,7 @@
             // Splitting English and Spanish descriptions
             const desc = item.lastElementChild.innerText.split('*');
             if (desc.length > 1) {
-                item.lastElementChild.innerHTML = `<span>${desc[0]}</span> <span class="menu-description-spanish">${desc[1]}</span>`;
+                item.lastElementChild.innerHTML = `<span>${desc[0]}</span><br/><span class="menu-description-spanish">${desc[1]}</span>`;
             }
         });
     }
