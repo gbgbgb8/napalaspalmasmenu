@@ -23,7 +23,7 @@
             <label class="form-label">Type of Menu</label>
             <input type="text" class="form-control" v-model="menuType" placeholder="Enter Type or Click Below">
             <div class="mt-2">
-                <button v-for="type in menuTypes" @click="menuType = type" class="btn btn-outline-primary me-2">{{ type }}</button>
+                <button v-for="type in menuTypes" @click="setMenuType(type)" class="btn btn-outline-primary me-2">{{ type }}</button>
             </div>
         </div>
 
@@ -32,7 +32,7 @@
             <label class="form-label">Menu Section</label>
             <input type="text" class="form-control" v-model="section.name" placeholder="Enter Section Name or Click Below">
             <div class="mt-2 mb-3">
-                <button v-for="s in commonSections" @click="section.name = s" class="btn btn-outline-secondary me-2">{{ s }}</button>
+                <button v-for="s in commonSections" @click="setSectionName(section, s)" class="btn btn-outline-secondary me-2">{{ s }}</button>
             </div>
 
             <!-- Items in section -->
@@ -50,7 +50,7 @@
     </div>
 
     <!-- Vue.js and Bootstrap JS -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/3.3.4/vue.cjs.js" integrity="sha512-Om0T2d9tl4H2ShSsEkWjJeQOlXGJg4OZvXKZw075refp2oPmExCEa/lSLzZaJw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://unpkg.com/vue@3.3.4/dist/vue.global.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.1/js/bootstrap.min.js" integrity="sha512-fHY2UiQlipUq0dEabSM4s+phmn+bcxSYzXP4vAXItBvBHU7zAM/mkhCZjtBEIJexhOMzZbgFlPLuErlJF2b+0g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
     <script>
@@ -72,6 +72,12 @@
                 }
             },
             methods: {
+                setMenuType(type) {
+                    this.menuType = type;
+                },
+                setSectionName(section, name) {
+                    section.name = name;
+                },
                 addSection() {
                     this.sections.push({
                         name: '',
@@ -91,7 +97,6 @@
                 },
                 generateMarkdown() {
                     // Logic to generate markdown from the data
-                    // TODO: Implement this method
                     console.log("Generating Markdown...");
                 }
             }
