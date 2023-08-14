@@ -4,62 +4,100 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Restaurant Menu</title>
-    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
-    <style>
-        .menu-description-spanish {
-            color: gray;
-            font-size: 90%;
-        }
-
-        .menu-section {
-            margin-top: 1.5rem;
-            border-bottom: 2px solid black;
-        }
-
-        .menu-item {
-            padding-left: 1.5rem;
-            border-left: 4px solid #007BFF;
-        }
-    </style>
+    <title>Menu Generator</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.1/css/bootstrap.min.css" integrity="sha512-Z/def5z5u2aR89OuzYcxmDJ0Bnd5V1cKqBEbvLOiUNWdg9PQeXVvXLI90SE4QOHGlfLqUnDNVAYyZi8UwUTmWQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 
 <body>
-    <div class="container mt-5">
-        <div id="menuContent"></div>
+
+    <div class="container mt-4" id="app">
+        <h1 class="text-center mb-4">Menu Generator for Local Restaurants</h1>
+
+        <div class="mb-3">
+            <label class="form-label">Restaurant Name</label>
+            <input type="text" class="form-control" v-model="restaurantName">
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Type of Menu</label>
+            <input type="text" class="form-control" v-model="menuType" placeholder="Enter Type or Click Below">
+            <div class="mt-2">
+                <button v-for="type in menuTypes" @click="menuType = type" class="btn btn-outline-primary me-2">{{ type }}</button>
+            </div>
+        </div>
+
+        <!-- Dynamic Sections -->
+        <div v-for="(section, index) in sections" class="mb-3">
+            <label class="form-label">Menu Section</label>
+            <input type="text" class="form-control" v-model="section.name" placeholder="Enter Section Name or Click Below">
+            <div class="mt-2 mb-3">
+                <button v-for="s in commonSections" @click="section.name = s" class="btn btn-outline-secondary me-2">{{ s }}</button>
+            </div>
+
+            <!-- Items in section -->
+            <div v-for="(item, itemIndex) in section.items" class="mb-3">
+                <input type="text" class="form-control mb-2" v-model="item.name" placeholder="Item Name">
+                <input type="text" class="form-control mb-2" v-model="item.description" placeholder="Description">
+                <input type="number" class="form-control mb-2" v-model="item.price" placeholder="Price ($)">
+                <!-- TODO: Add options for items here -->
+            </div>
+            <button @click="addItem(index)" class="btn btn-success mb-3">+ Add Another Item</button>
+        </div>
+        <button @click="addSection" class="btn btn-primary mb-3">+ Add Another Section</button>
+
+        <button @click="generateMarkdown" class="btn btn-danger">Generate Markdown Menu</button>
     </div>
 
-    <!-- Scripts -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/markdown-it/13.0.1/markdown-it.min.js" integrity="sha512-SYfDUYPg5xspsG6OOpXU366G8SZsdHOhqk/icdrYJ2E/WKZxPxze7d2HD3AyXpT7U22PZ5y74xRpqZ6A2bJ+kQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <!-- Vue.js and Bootstrap JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/3.3.4/vue.cjs.js" integrity="sha512-Om0T2d9tl4H2ShSsEkWjJeQOlXGJg4OZvXKZw075refp2oPmExCEa/lSLzZaJw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.1/js/bootstrap.min.js" integrity="sha512-fHY2UiQlipUq0dEabSM4s+phmn+bcxSYzXP4vAXItBvBHU7zAM/mkhCZjtBEIJexhOMzZbgFlPLuErlJF2b+0g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            fetch('menu.md')
-                .then(response => response.text())
-                .then(text => {
-                    const md = new markdownit();
-                    const result = md.render(text);
-                    document.getElementById('menuContent').innerHTML = result;
-                    styleMenu();
-                });
-
-            function styleMenu() {
-                const headers = document.querySelectorAll('#menuContent h1, #menuContent h2, #menuContent h3');
-                headers.forEach(header => {
-                    header.classList.add('display-4', 'menu-section'); // Add Bootstrap class for headers
-                });
-
-                const listItems = document.querySelectorAll('#menuContent li');
-                listItems.forEach(item => {
-                    item.classList.add('mb-3', 'menu-item'); // Add margin for each list item
-                    const paragraphs = item.querySelectorAll('p');
-                    if (paragraphs.length > 1) {
-                        const englishDesc = paragraphs[0].innerHTML;
-                        const spanishDesc = paragraphs[1].innerText.split('*')[1];  // Extract the Spanish description
-                        item.innerHTML = `<p>${englishDesc} <br><span class="menu-description-spanish">${spanishDesc}</span></p>`;
-                    }
-                });
+        const app = Vue.createApp({
+            data() {
+                return {
+                    restaurantName: '',
+                    menuType: '',
+                    menuTypes: ['Lunch', 'Dinner', 'Breakfast', 'Brunch', 'Holiday', 'None'],
+                    commonSections: ['Burritos', 'Sandwiches', 'Omelettes', 'Steak', 'Main', 'Appetizers', 'Desserts'],
+                    sections: [{
+                        name: '',
+                        items: [{
+                            name: '',
+                            description: '',
+                            price: 0
+                        }]
+                    }]
+                }
+            },
+            methods: {
+                addSection() {
+                    this.sections.push({
+                        name: '',
+                        items: [{
+                            name: '',
+                            description: '',
+                            price: 0
+                        }]
+                    });
+                },
+                addItem(index) {
+                    this.sections[index].items.push({
+                        name: '',
+                        description: '',
+                        price: 0
+                    });
+                },
+                generateMarkdown() {
+                    // Logic to generate markdown from the data
+                    // TODO: Implement this method
+                    console.log("Generating Markdown...");
+                }
             }
         });
+
+        app.mount('#app');
     </script>
 </body>
 
